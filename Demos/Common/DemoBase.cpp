@@ -33,7 +33,7 @@ int DemoBase::RENDER_SDF = -1;
 int DemoBase::RENDER_BVH = -1;
 int DemoBase::RENDER_BVH_TETS = -1;
 
- 
+
 DemoBase::DemoBase()
 {
 	Utilities::logger.addSink(unique_ptr<Utilities::ConsoleSink>(new Utilities::ConsoleSink(Utilities::LogLevel::INFO)));
@@ -111,7 +111,7 @@ void DemoBase::initParameters()
 }
 
 void DemoBase::cleanup()
-{	
+{
 	m_scene.m_rigidBodyData.clear();
 	m_scene.m_rigidBodyData.clear();
 	m_scene.m_triangleModelData.clear();
@@ -282,7 +282,7 @@ void DemoBase::render()
 
 	MiniGL::coordinateSystem();
 
-	// Draw sim model	
+	// Draw sim model
 	SimulationModel *model = Simulation::getCurrent()->getModel();
 	SimulationModel::RigidBodyVector &rb = model->getRigidBodies();
 	SimulationModel::ConstraintVector &constraints = model->getConstraints();
@@ -525,7 +525,7 @@ void DemoBase::renderTriangleModels()
 
 	for (unsigned int i = 0; i < model->getTriangleModels().size(); i++)
 	{
-		// mesh 
+		// mesh
 		const IndexedFaceMesh &mesh = model->getTriangleModels()[i]->getParticleMesh();
 		const unsigned int offset = model->getTriangleModels()[i]->getIndexOffset();
 		Visualization::drawTexturedMesh(pd, mesh, offset, surfaceColor);

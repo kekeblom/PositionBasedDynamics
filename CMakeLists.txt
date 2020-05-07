@@ -6,6 +6,8 @@ set(PROJECT_PATH ${PROJECT_SOURCE_DIR})
 include_directories(${PROJECT_SOURCE_DIR})
 
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/CMake" ${CMAKE_MODULE_PATH})
+set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+set(CMAKE_CXX_FLAGS_DEBUG "-O3 -g")
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
 include(${PROJECT_PATH}/CMake/Common.cmake)
@@ -17,10 +19,10 @@ if (NOT WIN32)
 endif()
 
 if (DEFINED PBD_EXTERNALINSTALLDIR)
-	set(ExternalInstallDir "${PBD_EXTERNALINSTALLDIR}" CACHE INTERNAL "External install directory")	
+	set(ExternalInstallDir "${PBD_EXTERNALINSTALLDIR}" CACHE INTERNAL "External install directory")
 else()
-	set(ExternalInstallDir "${PROJECT_BINARY_DIR}" CACHE INTERNAL "External install directory")	
-endif()	
+	set(ExternalInstallDir "${PROJECT_BINARY_DIR}" CACHE INTERNAL "External install directory")
+endif()
 
 include(ExternalProject)
 set(EigenDir "${CMAKE_SOURCE_DIR}/extern/eigen")
@@ -45,10 +47,10 @@ else()
 	   CMAKE_ARGS -DCMAKE_BUILD_TYPE:STRING=${EXT_CMAKE_BUILD_TYPE} -DCMAKE_INSTALL_PREFIX:PATH=${ExternalInstallDir}/Discregrid
 	   -DBUILD_AS_SHARED_LIBS:BOOL=0
 	   -DBUILD_CMD_EXECUTABLE:BOOL=0 -DEIGEN3_INCLUDE_DIR:PATH=${EigenDir}
-	) 
+	)
 	ExternalProject_Get_Property(Ext_Discregrid INSTALL_DIR)
 	set(Discregrid_INCLUDE_DIR ${INSTALL_DIR}/include)
-	set(Discregrid_LIBRARIES optimized ${INSTALL_DIR}/lib/${CMAKE_STATIC_LIBRARY_PREFIX}Discregrid${CMAKE_STATIC_LIBRARY_SUFFIX} 
+	set(Discregrid_LIBRARIES optimized ${INSTALL_DIR}/lib/${CMAKE_STATIC_LIBRARY_PREFIX}Discregrid${CMAKE_STATIC_LIBRARY_SUFFIX}
 							 debug ${INSTALL_DIR}/lib/${CMAKE_STATIC_LIBRARY_PREFIX}Discregrid_d${CMAKE_STATIC_LIBRARY_SUFFIX})
 	unset(INSTALL_DIR)
 	message(STATUS "Building ${Discregrid_INCLUDE_DIR}")
@@ -64,8 +66,8 @@ else()
 	   GIT_REPOSITORY https://github.com/InteractiveComputerGraphics/GenericParameters.git
 	   GIT_TAG "b1ad669fac8d106515f6aa8514a03598d5766a36"
 	   INSTALL_DIR ${ExternalInstallDir}/GenericParameters
-	   CMAKE_ARGS -DCMAKE_BUILD_TYPE=${EXT_CMAKE_BUILD_TYPE} -DCMAKE_INSTALL_PREFIX:PATH=${ExternalInstallDir}/GenericParameters -DGENERICPARAMETERS_NO_TESTS:BOOL=1		
-	) 
+	   CMAKE_ARGS -DCMAKE_BUILD_TYPE=${EXT_CMAKE_BUILD_TYPE} -DCMAKE_INSTALL_PREFIX:PATH=${ExternalInstallDir}/GenericParameters -DGENERICPARAMETERS_NO_TESTS:BOOL=1
+	)
 	ExternalProject_Get_Property(Ext_GenericParameters INSTALL_DIR)
 	set(GenericParameters_INCLUDE_DIR ${INSTALL_DIR}/include)
 	unset(INSTALL_DIR)

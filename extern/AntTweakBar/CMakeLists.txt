@@ -1,4 +1,4 @@
-set(ATB_SOURCES 
+set(ATB_SOURCES
 	src/AntPerfTimer.h
 	src/LoadOGL.cpp
 	src/LoadOGL.h
@@ -35,7 +35,7 @@ set(ATB_SOURCES
 set(ATB_HEADERS
     include/AntTweakBar.h
 )
-    
+
 add_definitions(-DTW_EXPORTS -DTW_STATIC)
 
 if (WIN32)
@@ -48,9 +48,9 @@ if (APPLE)
    find_library(APPKIT_LIBRARY AppKit)
    set(EXTRA_LIBS ${APPKIT_LIBRARY})
    set(CMAKE_CXX_FLAGS "-g -Wall -ObjC++ -fPIC -fno-strict-aliasing -D__PLACEMENT_NEW_INLINE")
-   add_definitions(-D_MACOSX)   
+   add_definitions(-D_MACOSX)
 elseif (UNIX)
-    add_definitions(-D_UNIX -D__PLACEMENT_NEW_INLINE)
+   add_definitions(-D_UNIX -D__PLACEMENT_NEW_INLINE)
 endif()
 
 include_directories(include)
@@ -60,7 +60,7 @@ add_library(AntTweakBar STATIC ${ATB_HEADERS} ${ATB_SOURCES})
 set_target_properties(AntTweakBar PROPERTIES FOLDER "External Dependencies")
 
 if (APPLE)
-    target_link_libraries(AntTweakBar) 
+    target_link_libraries(AntTweakBar)
 elseif (UNIX)
     target_link_libraries(AntTweakBar X11)
 endif()
@@ -69,3 +69,4 @@ set(AntTweakBar_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/include
     CACHE INTERNAL "AntTweakBar include directory")
 set(AntTweakBar_LIBRARIES AntTweakBar
     CACHE INTERNAL "AntTweakBar library")
+

@@ -51,7 +51,7 @@ namespace PBD
 			Quaternionr m_q_initial;
 			/** difference of the initial translation and the translation of the main axis transformation */
 			Vector3r m_x0_mat;
-			/** rotationMatrix = 3x3 matrix. 
+			/** rotationMatrix = 3x3 matrix.
 			* Important for the transformation from world in body space and vice versa.
 			* When using quaternions the rotation matrix is computed out of the quaternion.
 			*/
@@ -72,9 +72,9 @@ namespace PBD
 			Vector3r m_transformation_v1;
 			Vector3r m_transformation_v2;
 			Vector3r m_transformation_R_X_v1;
-			
+
 		public:
-			RigidBody(void) 
+			RigidBody(void)
 			{
 			}
 
@@ -82,13 +82,13 @@ namespace PBD
 			{
 			}
 
-			void initBody(const Real mass, const Vector3r &x, 
-				const Vector3r &inertiaTensor, const Quaternionr &rotation, 
-				const VertexData &vertices, const Utilities::IndexedFaceMesh &mesh, 
+			void initBody(const Real mass, const Vector3r &x,
+				const Vector3r &inertiaTensor, const Quaternionr &rotation,
+				const VertexData &vertices, const Utilities::IndexedFaceMesh &mesh,
 				const Vector3r &scale = Vector3r(1.0, 1.0, 1.0))
 			{
 				setMass(mass);
-				m_x = x; 
+				m_x = x;
 				m_x0 = x;
 				m_lastX = x;
 				m_oldX = x;
@@ -167,15 +167,24 @@ namespace PBD
 				rotationUpdated();
 			}
 
+			Quaternionr getRotationGlobal() {
+				return getRotation() * getRotationMAT().inverse() * getRotationInitial();
+			}
+
+			void setRotationGlobal(const Quaternionr &value) {
+				setRotation(value * getRotationInitial().inverse() * getRotationMAT());
+				rotationUpdated();
+			}
+
 			void updateInverseTransformation()
 			{
 				// remove the rotation of the main axis transformation that is performed
-				// to get a diagonal inertia tensor since the distance function is 
+				// to get a diagonal inertia tensor since the distance function is
 				// evaluated in local coordinates
 				//
 				// transformation world to local:
 				// p_local = R_initial^T ( R_MAT R^T (p_world - x) - x_initial + x_MAT)
-				// 
+				//
 				// transformation local to world:
 				// p_world = R R_MAT^T (R_initial p_local + x_initial - x_MAT) + x
 				//
@@ -209,7 +218,7 @@ namespace PBD
 			{
 				// apply initial rotation
 				VertexData &vd = m_geometry.getVertexDataLocal();
-				
+
 				Utilities::VolumeIntegration vi(m_geometry.getVertexDataLocal().size(), m_geometry.getMesh().numFaces(), &m_geometry.getVertexDataLocal().getPosition(0), m_geometry.getMesh().getFaces().data());
 				vi.compute_inertia_tensor(density);
 
@@ -231,7 +240,7 @@ namespace PBD
 				R = m_rot * R;
 				x_MAT = m_rot * x_MAT + m_x0;
 
-				// rotate vertices back				
+				// rotate vertices back
 				for (unsigned int i = 0; i < vd.size(); i++)
 					vd.getPosition(i) = R.transpose() * (vd.getPosition(i) - x_MAT);
 
@@ -290,7 +299,7 @@ namespace PBD
 				return m_x;
 			}
 
-			FORCE_INLINE const Vector3r &getPosition() const 
+			FORCE_INLINE const Vector3r &getPosition() const
 			{
 				return m_x;
 			}
@@ -373,7 +382,7 @@ namespace PBD
 			FORCE_INLINE void setVelocity(const Vector3r &value)
 			{
 				m_v = value;
-			}			
+			}
 
 			FORCE_INLINE Vector3r &getVelocity0()
 			{
@@ -395,7 +404,7 @@ namespace PBD
 				return m_a;
 			}
 
-			FORCE_INLINE const Vector3r &getAcceleration() const 
+			FORCE_INLINE const Vector3r &getAcceleration() const
 			{
 				return m_a;
 			}
@@ -586,24 +595,24 @@ namespace PBD
 				m_torque = value;
 			}
 
-			FORCE_INLINE Real getRestitutionCoeff() const 
-			{ 
-				return m_restitutionCoeff; 
+			FORCE_INLINE Real getRestitutionCoeff() const
+			{
+				return m_restitutionCoeff;
 			}
 
-			FORCE_INLINE void setRestitutionCoeff(Real val) 
-			{ 
-				m_restitutionCoeff = val; 
+			FORCE_INLINE void setRestitutionCoeff(Real val)
+			{
+				m_restitutionCoeff = val;
 			}
 
-			FORCE_INLINE Real getFrictionCoeff() const 
-			{ 
-				return m_frictionCoeff; 
+			FORCE_INLINE Real getFrictionCoeff() const
+			{
+				return m_frictionCoeff;
 			}
 
-			FORCE_INLINE void setFrictionCoeff(Real val) 
-			{ 
-				m_frictionCoeff = val; 
+			FORCE_INLINE void setFrictionCoeff(Real val)
+			{
+				m_frictionCoeff = val;
 			}
 
 			RigidBodyGeometry& getGeometry()

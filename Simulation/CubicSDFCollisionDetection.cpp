@@ -8,7 +8,7 @@ int CubicSDFCollisionDetection::CubicSDFCollisionObject::TYPE_ID = IDFactory::ge
 
 CubicSDFCollisionDetection::CubicSDFCollisionDetection() :
 	DistanceFieldCollisionDetection()
-{	
+{
 }
 
 CubicSDFCollisionDetection::~CubicSDFCollisionDetection()
@@ -76,7 +76,7 @@ bool CubicSDFCollisionDetection::CubicSDFCollisionObject::collisionTest(const Ve
 {
 	const Vector3r scaled_x = x.cwiseProduct(m_scale.cwiseInverse());
 
-	Eigen::Vector3d normal;	
+	Eigen::Vector3d normal;
 	double d = m_sdf->interpolate(0, scaled_x.template cast<double>(), &normal);
 	if (d == std::numeric_limits<Real>::max())
 		return false;

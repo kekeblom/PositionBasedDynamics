@@ -1,6 +1,7 @@
 #include "DistanceFieldCollisionDetection.h"
 #include "Simulation/IDFactory.h"
 #include "omp.h"
+#include <limits>
 
 using namespace PBD;
 using namespace Utilities;
@@ -14,14 +15,9 @@ int DistanceFieldCollisionDetection::DistanceFieldCollisionHollowBox::TYPE_ID = 
 int DistanceFieldCollisionDetection::DistanceFieldCollisionObjectWithoutGeometry::TYPE_ID = IDFactory::getId();
 
 
-DistanceFieldCollisionDetection::DistanceFieldCollisionDetection() :
-	CollisionDetection()
-{
-}
+DistanceFieldCollisionDetection::DistanceFieldCollisionDetection() : CollisionDetection() {}
 
-DistanceFieldCollisionDetection::~DistanceFieldCollisionDetection()
-{
-}
+DistanceFieldCollisionDetection::~DistanceFieldCollisionDetection() {}
 
 void DistanceFieldCollisionDetection::collisionDetection(SimulationModel &model)
 {
@@ -47,7 +43,7 @@ void DistanceFieldCollisionDetection::collisionDetection(SimulationModel &model)
 	}
 
 	//omp_set_num_threads(1);
-	std::vector<std::vector<ContactData> > contacts_mt;	
+	std::vector<std::vector<ContactData> > contacts_mt;
 #ifdef _DEBUG
 	const unsigned int maxThreads = 1;
 #else
@@ -58,14 +54,14 @@ void DistanceFieldCollisionDetection::collisionDetection(SimulationModel &model)
 	#pragma omp parallel default(shared)
 	{
 		// Update BVHs
-		#pragma omp for schedule(static)  
+		#pragma omp for schedule(static)
 		for (int i = 0; i < (int)m_collisionObjects.size(); i++)
 		{
 			CollisionDetection::CollisionObject *co = m_collisionObjects[i];
 			updateAABB(model, co);
 			if (isDistanceFieldCollisionObject(co))
 			{
-				if (co->m_bodyType == CollisionDetection::CollisionObject::TriangleModelCollisionObjectType) 
+				if (co->m_bodyType == CollisionDetection::CollisionObject::TriangleModelCollisionObjectType)
 				{
 					DistanceFieldCollisionObject *sco = (DistanceFieldCollisionObject*)co;
 					sco->m_bvh.update();
@@ -94,12 +90,11 @@ void DistanceFieldCollisionDetection::collisionDetection(SimulationModel &model)
 				!AABB::intersection(co1->m_aabb, co2->m_aabb))
 				continue;
 
-
 			if ((co1->m_bodyType == CollisionDetection::CollisionObject::RigidBodyCollisionObjectType) &&
 				(co2->m_bodyType == CollisionDetection::CollisionObject::RigidBodyCollisionObjectType) &&
 				((DistanceFieldCollisionObject*) co1)->m_testMesh)
 			{
-				RigidBody *rb1 = rigidBodies[co1->m_bodyIndex];				
+				RigidBody *rb1 = rigidBodies[co1->m_bodyIndex];
 				RigidBody *rb2 = rigidBodies[co2->m_bodyIndex];
 				const Real restitutionCoeff = rb1->getRestitutionCoeff() * rb2->getRestitutionCoeff();
 				const Real frictionCoeff = rb1->getFrictionCoeff() + rb2->getFrictionCoeff();
@@ -124,7 +119,7 @@ void DistanceFieldCollisionDetection::collisionDetection(SimulationModel &model)
 					, contacts_mt
 					);
 			}
-			else if ((co1->m_bodyType == CollisionDetection::CollisionObject::TetModelCollisionObjectType) && 
+			else if ((co1->m_bodyType == CollisionDetection::CollisionObject::TetModelCollisionObjectType) &&
 					(co2->m_bodyType == CollisionDetection::CollisionObject::RigidBodyCollisionObjectType) &&
 					((DistanceFieldCollisionObject*)co1)->m_testMesh)
 			{
@@ -176,7 +171,7 @@ void DistanceFieldCollisionDetection::collisionDetection(SimulationModel &model)
 			{
 				addParticleSolidContact(contacts_mt[i][j].m_index1, contacts_mt[i][j].m_index2,
 					contacts_mt[i][j].m_elementIndex2, contacts_mt[i][j].m_bary2,
-					contacts_mt[i][j].m_cp1, contacts_mt[i][j].m_cp2, contacts_mt[i][j].m_normal,					
+					contacts_mt[i][j].m_cp1, contacts_mt[i][j].m_cp2, contacts_mt[i][j].m_normal,
 					contacts_mt[i][j].m_dist, contacts_mt[i][j].m_restitution, contacts_mt[i][j].m_friction);
 				m_tempContacts.push_back(contacts_mt[i][j]);
 			}
@@ -184,7 +179,7 @@ void DistanceFieldCollisionDetection::collisionDetection(SimulationModel &model)
 	}
 }
 
-void DistanceFieldCollisionDetection::collisionDetectionRigidBodies(RigidBody *rb1, DistanceFieldCollisionObject *co1, RigidBody *rb2, DistanceFieldCollisionObject *co2, 
+void DistanceFieldCollisionDetection::collisionDetectionRigidBodies(RigidBody *rb1, DistanceFieldCollisionObject *co1, RigidBody *rb2, DistanceFieldCollisionObject *co2,
 	const Real restitutionCoeff, const Real frictionCoeff
 	, std::vector<std::vector<ContactData> > &contacts_mt
 	)
@@ -197,12 +192,12 @@ void DistanceFieldCollisionDetection::collisionDetectionRigidBodies(RigidBody *r
 	const Vector3r &com2 = rb2->getPosition();
 
 	// remove the rotation of the main axis transformation that is performed
-	// to get a diagonal inertia tensor since the distance function is 
+	// to get a diagonal inertia tensor since the distance function is
 	// evaluated in local coordinates
 	//
 	// transformation world to local:
 	// p_local = R_initial^T ( R_MAT R^T (p_world - x) - x_initial + x_MAT)
-	// 
+	//
 	// transformation local to:
 	// p_world = R R_MAT^T (R_initial p_local + x_initial - x_MAT) + x
 	//
@@ -257,7 +252,7 @@ void DistanceFieldCollisionDetection::collisionDetectionRigidBodies(RigidBody *r
 				int tid = 0;
 #else
 				int tid = omp_get_thread_num();
-#endif			
+#endif
 
 				contacts_mt[tid].push_back({ 0, co1->m_bodyIndex, co2->m_bodyIndex, x_w, cp_w, n_w, dist, restitutionCoeff, frictionCoeff });
 			}
@@ -268,7 +263,7 @@ void DistanceFieldCollisionDetection::collisionDetectionRigidBodies(RigidBody *r
 
 
 void DistanceFieldCollisionDetection::collisionDetectionRBSolid(const ParticleData &pd, const unsigned int offset, const unsigned int numVert,
-	DistanceFieldCollisionObject *co1, RigidBody *rb2, DistanceFieldCollisionObject *co2, 
+	DistanceFieldCollisionObject *co1, RigidBody *rb2, DistanceFieldCollisionObject *co2,
 	const Real restitutionCoeff, const Real frictionCoeff
 	, std::vector<std::vector<ContactData> > &contacts_mt
 	)
@@ -276,12 +271,12 @@ void DistanceFieldCollisionDetection::collisionDetectionRBSolid(const ParticleDa
 	const Vector3r &com2 = rb2->getPosition();
 
 	// remove the rotation of the main axis transformation that is performed
-	// to get a diagonal inertia tensor since the distance function is 
+	// to get a diagonal inertia tensor since the distance function is
 	// evaluated in local coordinates
 	//
 	// transformation world to local:
 	// p_local = R_initial^T ( R_MAT R^T (p_world - x) - x_initial + x_MAT)
-	// 
+	//
 	// transformation local to:
 	// p_world = R R_MAT^T (R_initial p_local + x_initial - x_MAT) + x
 	//
@@ -337,7 +332,7 @@ void DistanceFieldCollisionDetection::collisionDetectionRBSolid(const ParticleDa
 				int tid = 0;
 #else
 				int tid = omp_get_thread_num();
-#endif			
+#endif
 				contacts_mt[tid].push_back({ 1, index, co2->m_bodyIndex, x_w, cp_w, n_w, dist, restitutionCoeff, frictionCoeff });
 			}
 		}
@@ -389,7 +384,7 @@ void DistanceFieldCollisionDetection::collisionDetectionSolidSolid(const Particl
 				Vector3r bary = A.inverse() * (x_w - x0);
 
 				// check if point lies in tet using barycentric coordinates
- 				if ((bary[0] >= 0.0) && (bary[1] >= 0.0) && (bary[2] >= 0.0) && 
+ 				if ((bary[0] >= 0.0) && (bary[1] >= 0.0) && (bary[2] >= 0.0) &&
  					(bary[0] + bary[1] + bary[2] <= 1.0))
 				{
 					// use barycentric coordinates to determine position of the point in the reference space of the tet
@@ -409,7 +404,7 @@ void DistanceFieldCollisionDetection::collisionDetectionSolidSolid(const Particl
 					Vector3r cp_l, n_l;
 					Real dist;
 
-					// apply inverse initial transform to transform the point in the space of the 
+					// apply inverse initial transform to transform the point in the space of the
 					// signed distance field
 					const Vector3r X_l = (tm2->getInitialR().transpose() * (X - tm2->getInitialX()));
 
@@ -417,7 +412,7 @@ void DistanceFieldCollisionDetection::collisionDetectionSolidSolid(const Particl
 					//if (co2->collisionTest(X_l, m_tolerance, cp_l, n_l, dist))
 					if (co2->collisionTest(X_l, 0.0, cp_l, n_l, dist))
 					{
-						unsigned int cp_tetIndex; 
+						unsigned int cp_tetIndex;
 						Vector3r cp_bary;
 
 						// transform closest point on surface back to the reference space of the tet model
@@ -437,19 +432,19 @@ void DistanceFieldCollisionDetection::collisionDetectionSolidSolid(const Particl
 								A.col(0) = x1 - x0;
 								A.col(1) = x2 - x0;
 								A.col(2) = x3 - x0;
-								
-								// compute world space contact point in body 2	
+
+								// compute world space contact point in body 2
 								cp_w = x0 + A * cp_bary;
 							}
-							else 
-								// compute world space contact point in body 2	
-								cp_w = x0 + A * cp_bary;							
+							else
+								// compute world space contact point in body 2
+								cp_w = x0 + A * cp_bary;
 
 #ifdef _DEBUG
 							int tid = 0;
 #else
 							int tid = omp_get_thread_num();
-#endif	
+#endif
 
 							Vector3r n_w = cp_w - x_w;
 
@@ -486,7 +481,7 @@ void DistanceFieldCollisionDetection::addCollisionBox(const unsigned int bodyInd
 	DistanceFieldCollisionDetection::DistanceFieldCollisionBox *cf = new DistanceFieldCollisionDetection::DistanceFieldCollisionBox();
 	cf->m_bodyIndex = bodyIndex;
 	cf->m_bodyType = bodyType;
-	// distance function requires 0.5*box 
+	// distance function requires 0.5*box
 	cf->m_box = 0.5*box;
 	cf->m_bvh.init(vertices, numVertices);
 	cf->m_bvh.construct();
@@ -560,7 +555,7 @@ void DistanceFieldCollisionDetection::addCollisionHollowBox(const unsigned int b
 	DistanceFieldCollisionDetection::DistanceFieldCollisionHollowBox *cf = new DistanceFieldCollisionDetection::DistanceFieldCollisionHollowBox();
 	cf->m_bodyIndex = bodyIndex;
 	cf->m_bodyType = bodyType;
-	// distance function requires 0.5*box 
+	// distance function requires 0.5*box
 	cf->m_box = 0.5*box;
 	cf->m_thickness = thickness;
 	cf->m_bvh.init(vertices, numVertices);
@@ -750,7 +745,7 @@ bool DistanceFieldCollisionDetection::findRefTetAt(const ParticleData &pd, TetMo
  		auto const& node = bvh0.node(node_index);
  		if (!node.is_leaf())
  			return;
- 
+
  		for (auto i = node.begin; i < node.begin + node.n; ++i)
  		{
 			const unsigned int tetIndex = bvh0.entity(i);
@@ -798,5 +793,24 @@ bool DistanceFieldCollisionDetection::findRefTetAt(const ParticleData &pd, TetMo
 	barycentricCoordinates = bary[index];
 	tetIndex = tets[index];
 	return true;
+}
+
+void DistanceFieldCollisionDetection::testPoints(const Eigen::Matrix<Real, Eigen::Dynamic, 3, Eigen::RowMajor>& points, Eigen::Matrix<bool, Eigen::Dynamic, 1>& in_collision, double tolerance = 1e-3) {
+	std::vector<DistanceFieldCollisionDetection::DistanceFieldCollisionObject*> collision_objects;
+	for (unsigned int i=0; i < m_collisionObjects.size(); i++) {
+		collision_objects.push_back((DistanceFieldCollisionDetection::DistanceFieldCollisionObject*)m_collisionObjects[i]);
+	}
+	for (unsigned int i=0; i < points.rows(); i++) {
+		Eigen::Vector3d point;
+		point[0] = points(i, 0); point[1] = points(i, 1); point[2] = points(i, 2);
+		double distance = std::numeric_limits<double>::max();
+		for (DistanceFieldCollisionDetection::DistanceFieldCollisionObject* co : collision_objects) {
+			double object_distance = co->distance(point, 0.0);
+			if (object_distance < distance) {
+				distance = object_distance;
+			}
+		}
+		in_collision[i] = distance < tolerance;
+	}
 }
 

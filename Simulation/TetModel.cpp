@@ -10,7 +10,7 @@ TetModel::TetModel() :
 	m_surfaceMesh(),
 	m_visVertices(),
 	m_visMesh(),
-	m_particleMesh()	
+	m_particleMesh()
 {
 	m_restitutionCoeff = static_cast<Real>(0.6);
 	m_frictionCoeff = static_cast<Real>(0.2);
@@ -26,7 +26,7 @@ void TetModel::cleanupModel()
 	m_particleMesh.release();
 }
 
-TetModel::ParticleMesh &TetModel::getParticleMesh() 
+TetModel::ParticleMesh &TetModel::getParticleMesh()
 {
 	return m_particleMesh;
 }
@@ -109,7 +109,7 @@ void TetModel::attachVisMesh(const ParticleData &pd)
 
 	#pragma omp parallel default(shared)
 	{
-		#pragma omp for schedule(static)  
+		#pragma omp for schedule(static)
 		for (int i = 0; i < (int)m_visVertices.size(); i++)
 		{
 			const Vector3r &p = m_visVertices.getPosition(i);
@@ -248,7 +248,7 @@ void TetModel::attachVisMesh(const ParticleData &pd)
 		}
 	}
 }
- 
+
 void TetModel::solveQuadraticForZero(const Vector3r& F, const Vector3r& Fu, const Vector3r& Fv, const Vector3r& Fuu,
 	const Vector3r&Fuv, const Vector3r& Fvv, Real& u, Real& v)
 {
@@ -284,7 +284,7 @@ void TetModel::solveQuadraticForZero(const Vector3r& F, const Vector3r& Fu, cons
 		v += H[1] * h1 + H[2] * h2;
 	}
 }
- 
+
 void TetModel::updateVisMesh(const ParticleData &pd)
 {
 	if (m_attachments.size() == 0)
@@ -298,7 +298,7 @@ void TetModel::updateVisMesh(const ParticleData &pd)
 
 	#pragma omp parallel default(shared)
 	{
-		#pragma omp for schedule(static)  
+		#pragma omp for schedule(static)
 		for (int i = 0; i < (int) m_attachments.size(); i++)
 		{
 			const unsigned int pindex = m_attachments[i].m_index;
@@ -324,8 +324,8 @@ void TetModel::updateVisMesh(const ParticleData &pd)
 	m_visMesh.updateNormals(m_visVertices, 0);
 	m_visMesh.updateVertexNormals(m_visVertices);
 }
- 
- 
+
+
  bool TetModel::pointInTriangle(const Vector3r& p0, const Vector3r& p1, const Vector3r& p2, const Vector3r& p,
  	Vector3r& inter, Vector3r &bary)
  {
@@ -333,7 +333,7 @@ void TetModel::updateVisMesh(const ParticleData &pd)
  	const Vector3r x43 = p - p2;
  	const Vector3r x13 = p0 - p2;
  	const Vector3r x23 = p1 - p2;
- 
+
  	// compute inv matrix a,b,b,c
  	Real a = x13.dot(x13);
  	Real b = x13.dot(x23);
@@ -341,23 +341,23 @@ void TetModel::updateVisMesh(const ParticleData &pd)
  	const Real det = a*c - b*b;
  	if (fabs(det) < 1.0e-9)
  		return false;
- 
+
 	Real d1 = x13.dot(x43);
  	Real d2 = x23.dot(x43);
- 
+
  	Real w1 = (c*d1 - b*d2) / det;
  	Real w2 = (a*d2 - b*d1) / det;
- 
+
  	// this clamping gives not an exact orthogonal point to the edge!!
  	if (w1 < 0) w1 = 0;
  	if (w1 > 1) w1 = 1;
  	if (w2 < 0) w2 = 0;
  	if (w2 > 1) w2 = 1;
- 
+
  	bary[0] = w1;
  	bary[1] = w2;
  	bary[2] = (Real)1 - w1 - w2;
- 
+
  	if (bary[2] < 0)
  	{
  		// this gives not an exact orthogonal point to the edge!!
@@ -366,8 +366,8 @@ void TetModel::updateVisMesh(const ParticleData &pd)
  		bary[1] -= w1 / (w12)*(w12 - 1);
  		bary[2] = 0;
  	}
- 
+
  	inter = p2 + bary[0] * x13 + bary[1] * x23;
- 
+
  	return true;
  }

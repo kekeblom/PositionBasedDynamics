@@ -39,12 +39,12 @@ namespace Utilities
 			{
 				m_numFaces = other.m_numFaces;
 				m_fIndices = new unsigned int[m_numFaces];
-#if defined(WIN32) || defined(_WIN32) || defined(WIN64)		
+#if defined(WIN32) || defined(_WIN32) || defined(WIN64)
 				std::copy(other.m_fIndices, other.m_fIndices + m_numFaces,
 					stdext::unchecked_array_iterator<unsigned int*>(m_fIndices));
 #else
 				std::copy(other.m_fIndices, other.m_fIndices + m_numFaces, m_fIndices);
-#endif		
+#endif
 				return *this;
 			}
 
@@ -75,12 +75,12 @@ namespace Utilities
 			{
 				m_numEdges = other.m_numEdges;
 				m_eIndices = new unsigned int[m_numEdges];
-#if defined(WIN32) || defined(_WIN32) || defined(WIN64)		
+#if defined(WIN32) || defined(_WIN32) || defined(WIN64)
 				std::copy(other.m_eIndices, other.m_eIndices + m_numEdges,
 					stdext::unchecked_array_iterator<unsigned int*>(m_eIndices));
 #else
 				std::copy(other.m_eIndices, other.m_eIndices + m_numEdges, m_eIndices);
-#endif		
+#endif
 				return *this;
 			}
 
@@ -173,7 +173,7 @@ namespace Utilities
 
 		#pragma omp parallel default(shared)
 		{
-			#pragma omp for schedule(static)  
+			#pragma omp for schedule(static)
 			for (int i = 0; i < (int) numFaces(); i++)
 			{
 				// Get first three points of face

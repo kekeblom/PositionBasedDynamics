@@ -158,11 +158,11 @@ void PositionBasedRigidBodyDynamics::computeMatrixQHat(const Quaternionr &q, Eig
 
 // ----------------------------------------------------------------------------------------------
 bool PositionBasedRigidBodyDynamics::init_BallJoint(
-	const Vector3r &x0, 						
-	const Quaternionr &q0,					
-	const Vector3r &x1, 						
-	const Quaternionr &q1,					
-	const Vector3r &ballJointPosition,		
+	const Vector3r &x0,
+	const Quaternionr &q0,
+	const Vector3r &x1,
+	const Quaternionr &q1,
+	const Vector3r &ballJointPosition,
 	Eigen::Matrix<Real, 3, 4, Eigen::DontAlign> &ballJointInfo
 	)
 {
@@ -211,13 +211,13 @@ bool PositionBasedRigidBodyDynamics::update_BallJoint(
 // ----------------------------------------------------------------------------------------------
 bool PositionBasedRigidBodyDynamics::solve_BallJoint(
 	const Real invMass0,
-	const Vector3r &x0, 						
-	const Matrix3r &inertiaInverseW0,		
-	const Quaternionr &q0,					
+	const Vector3r &x0,
+	const Matrix3r &inertiaInverseW0,
+	const Quaternionr &q0,
 	const Real invMass1,
-	const Vector3r &x1, 						
-	const Matrix3r &inertiaInverseW1,		
-	const Quaternionr &q1,	
+	const Vector3r &x1,
+	const Matrix3r &inertiaInverseW1,
+	const Quaternionr &q1,
 	const Eigen::Matrix<Real, 3, 4, Eigen::DontAlign> &ballJointInfo,
 	Vector3r &corr_x0, Quaternionr &corr_q0,
 	Vector3r &corr_x1, Quaternionr &corr_q1)
@@ -326,7 +326,7 @@ bool PositionBasedRigidBodyDynamics::solve_DistanceJoint(
 	const Matrix3r &inertiaInverseW1,
 	const Quaternionr &q1,
 	const Real stiffness,
-	const Real restLength,	
+	const Real restLength,
 	const Real dt,
 	const Eigen::Matrix<Real, 3, 4, Eigen::DontAlign> &jointInfo,
 	Real &lambda,
@@ -374,7 +374,7 @@ bool PositionBasedRigidBodyDynamics::solve_DistanceJoint(
 		alpha = 1.0 / (stiffness * dt * dt);
 		K += alpha;
 	}
-	
+
 	Real Kinv = 0.0;
 	if (fabs(K) > static_cast<Real>(1e-6))
 		Kinv = 1.0 / K;
@@ -528,7 +528,7 @@ bool PositionBasedRigidBodyDynamics::solve_BallOnLineJoint(
 	computeMatrixK(connector0, invMass0, x0, inertiaInverseW0, K1);
 	computeMatrixK(connector1, invMass1, x1, inertiaInverseW1, K2);
 
-	// projection 
+	// projection
 	const Eigen::Matrix<Real, 3, 2> PT = jointInfo.block<3, 2>(0, 8);
 	const Eigen::Matrix<Real, 2, 3> P = PT.transpose();
 
@@ -576,7 +576,7 @@ bool PositionBasedRigidBodyDynamics::init_HingeJoint(
 	// 3:	connector in body 1 (local)
 	// 4:	connector in body 0 (global)
 	// 5:	connector in body 1 (global)
-	// 6:	hinge axis in body 0 (local) used for rendering 
+	// 6:	hinge axis in body 0 (local) used for rendering
 
 	// transform in local coordinates
 	const Matrix3r rot0T = q0.matrix().transpose();
@@ -636,7 +636,7 @@ bool PositionBasedRigidBodyDynamics::update_HingeJoint(
 	// 3:	connector in body 1 (local)
 	// 4:	connector in body 0 (global)
 	// 5:	connector in body 1 (global)
-	// 6:	hinge axis in body 0 (local) used for rendering 
+	// 6:	hinge axis in body 0 (local) used for rendering
 
 	// compute world space positions of connectors
 	const Matrix3r rot0 = q0.matrix();
@@ -667,7 +667,7 @@ bool PositionBasedRigidBodyDynamics::solve_HingeJoint(
 	// 3:	connector in body 1 (local)
 	// 4:	connector in body 0 (global)
 	// 5:	connector in body 1 (global)
-	// 6:	hinge axis in body 0 (local) used for rendering 
+	// 6:	hinge axis in body 0 (local) used for rendering
 
 
 	// compute constraint value
@@ -765,7 +765,7 @@ bool PositionBasedRigidBodyDynamics::solve_HingeJoint(
 		corr_q1.coeffs() = 0.5 *(otQ*q1).coeffs();
 	}
 
-	return true; 
+	return true;
 }
 
 // ----------------------------------------------------------------------------------------------
@@ -787,7 +787,7 @@ bool PositionBasedRigidBodyDynamics::init_UniversalJoint(
 	// 3:	constraint axis 1 in body 1 (local)
 	// 4:	connector in body 0 (global)
 	// 5:	connector in body 1 (global)
-	// 6:	constraint axis 0 in body 0 (global)	
+	// 6:	constraint axis 0 in body 0 (global)
 	// 7:	constraint axis 1 in body 1 (global)
 
 	// transform in local coordinates
@@ -841,7 +841,7 @@ bool PositionBasedRigidBodyDynamics::update_UniversalJoint(
 	// 3:	constraint axis 1 in body 1 (local)
 	// 4:	connector in body 0 (global)
 	// 5:	connector in body 1 (global)
-	// 6:	constraint axis 0 in body 0 (global)	
+	// 6:	constraint axis 0 in body 0 (global)
 	// 7:	constraint axis 1 in body 1 (global)
 
 	// compute world space positions of connectors
@@ -880,7 +880,7 @@ bool PositionBasedRigidBodyDynamics::solve_UniversalJoint(
 	// 3:	constraint axis 1 in body 1 (local)
 	// 4:	connector in body 0 (global)
 	// 5:	connector in body 1 (global)
-	// 6:	constraint axis 0 in body 0 (global)	
+	// 6:	constraint axis 0 in body 0 (global)
 	// 7:	constraint axis 1 in body 1 (global)
 
 	const Vector3r &c0 = jointInfo.col(4);
@@ -1235,7 +1235,7 @@ bool PositionBasedRigidBodyDynamics::solve_TargetPositionMotorSliderJoint(
 	const Vector3r &x1,
 	const Matrix3r &inertiaInverseW1,
 	const Quaternionr &q1,
-	const Real targetPosition,	
+	const Real targetPosition,
 	const Eigen::Matrix<Real, 4, 6, Eigen::DontAlign> &jointInfo,
 	Vector3r &corr_x0, Quaternionr &corr_q0,
 	Vector3r &corr_x1, Quaternionr &corr_q1)
@@ -1504,7 +1504,7 @@ bool PositionBasedRigidBodyDynamics::init_TargetAngleMotorHingeJoint(
 	// 4:	connector in body 1 (local)
 	// 5:	connector in body 0 (global)
 	// 6:	connector in body 1 (global)
-	// 7:	hinge axis in body 0 (local) used for rendering 
+	// 7:	hinge axis in body 0 (local) used for rendering
 
 	// transform in local coordinates
 	const Matrix3r rot0T = q0.matrix().transpose();
@@ -1564,7 +1564,7 @@ bool PositionBasedRigidBodyDynamics::update_TargetAngleMotorHingeJoint(
 	// 4:	connector in body 1 (local)
 	// 5:	connector in body 0 (global)
 	// 6:	connector in body 1 (global)
-	// 7:	hinge axis in body 0 (local) used for rendering 
+	// 7:	hinge axis in body 0 (local) used for rendering
 
 	// compute world space positions of connectors
 	const Matrix3r rot0 = q0.matrix();
@@ -1596,7 +1596,7 @@ bool PositionBasedRigidBodyDynamics::solve_TargetAngleMotorHingeJoint(
 	// 4:	connector in body 1 (local)
 	// 5:	connector in body 0 (global)
 	// 6:	connector in body 1 (global)
-	// 7:	hinge axis in body 0 (local) used for rendering 
+	// 7:	hinge axis in body 0 (local) used for rendering
 	const Vector3r &c0 = jointInfo.block<3, 1>(0, 5);
 	const Vector3r &c1 = jointInfo.block<3, 1>(0, 6);
 
@@ -1808,8 +1808,8 @@ bool PositionBasedRigidBodyDynamics::solve_TargetVelocityMotorHingeJoint(
 	Vector3r &corr_x1, Quaternionr &corr_q1)
 {
 	Eigen::Matrix<Real, 4, 7> hingeJointInfo = jointInfo.block<4, 7>(0, 0);
-	const bool res = solve_HingeJoint(	invMass0, x0, inertiaInverseW0, q0, 
-												invMass1, x1, inertiaInverseW1, q1, 
+	const bool res = solve_HingeJoint(	invMass0, x0, inertiaInverseW0, q0,
+												invMass1, x1, inertiaInverseW1, q1,
 												hingeJointInfo, corr_x0, corr_q0, corr_x1, corr_q1);
 	return res;
 }
@@ -1820,7 +1820,7 @@ bool PositionBasedRigidBodyDynamics::velocitySolve_TargetVelocityMotorHingeJoint
 	const Real invMass0,
 	const Vector3r &x0,
 	const Vector3r &v0,
-	const Matrix3r &inertiaInverseW0,	
+	const Matrix3r &inertiaInverseW0,
 	const Vector3r &omega0,
 	const Real invMass1,
 	const Vector3r &x1,
@@ -2214,7 +2214,7 @@ bool PositionBasedRigidBodyDynamics::init_RigidBodyContactConstraint(
 	const Vector3r &x0,						// center of mass of body 0
 	const Vector3r &v0,						// velocity of body 0
 	const Matrix3r &inertiaInverseW0,		// inverse inertia tensor (world space) of body 0
-	const Quaternionr &q0,					// rotation of body 0	
+	const Quaternionr &q0,					// rotation of body 0
 	const Vector3r &omega0,					// angular velocity of body 0
 	const Real invMass1,							// inverse mass is zero if body is static
 	const Vector3r &x1,						// center of mass of body 1
@@ -2316,8 +2316,9 @@ bool PositionBasedRigidBodyDynamics::velocitySolve_RigidBodyContactConstraint(
 	// 1.0 / normal^T * K * normal
 	const Real nKn_inv = constraintInfo(0, 4);
 
-	// penetration depth 
+	// penetration depth
 	const Real d = normal.dot(connector0 - connector1);
+	//std::cout << "depth: " << d << std::endl;
 
 	// maximal impulse in tangent direction
 	const Real pMax = constraintInfo(1, 4);
@@ -2382,7 +2383,7 @@ bool PositionBasedRigidBodyDynamics::init_ParticleRigidBodyContactConstraint(
 	const Vector3r &x1,						// center of mass of body 1
 	const Vector3r &v1,						// velocity of body 1
 	const Matrix3r &inertiaInverseW1,		// inverse inertia tensor (world space) of body 1
-	const Quaternionr &q1,					// rotation of body 1	
+	const Quaternionr &q1,					// rotation of body 1
 	const Vector3r &omega1,					// angular velocity of body 1
 	const Vector3r &cp0,						// contact point of body 0
 	const Vector3r &cp1,						// contact point of body 1
@@ -2478,7 +2479,7 @@ bool PositionBasedRigidBodyDynamics::velocitySolve_ParticleRigidBodyContactConst
 	// 1.0 / normal^T * K * normal
 	const Real nKn_inv = constraintInfo(0, 4);
 
-	// penetration depth 
+	// penetration depth
 	const Real d = normal.dot(connector0 - connector1);
 
 	// maximal impulse in tangent direction
@@ -2517,7 +2518,7 @@ bool PositionBasedRigidBodyDynamics::velocitySolve_ParticleRigidBodyContactConst
 
 	if (invMass0 != 0.0)
 	{
-		corr_v0 = invMass0*p;		
+		corr_v0 = invMass0*p;
 	}
 
 	if (invMass1 != 0.0)

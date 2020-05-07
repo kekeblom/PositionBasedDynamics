@@ -74,7 +74,7 @@ namespace PBD
 			return (unsigned int)m_x.size();
 		}
 
-		FORCE_INLINE const std::vector<Vector3r>* getVertices()
+		FORCE_INLINE const std::vector<Vector3r>* getVertices() const
 		{
 			return &m_x;
 		}
@@ -112,7 +112,7 @@ namespace PBD
 			{
 			}
 
-			FORCE_INLINE ~ParticleData(void) 
+			FORCE_INLINE ~ParticleData(void)
 			{
 				m_masses.clear();
 				m_invMasses.clear();
@@ -141,7 +141,7 @@ namespace PBD
 				return m_x[i];
 			}
 
-			FORCE_INLINE const Vector3r &getPosition(const unsigned int i) const 
+			FORCE_INLINE const Vector3r &getPosition(const unsigned int i) const
 			{
 				return m_x[i];
 			}
@@ -195,13 +195,13 @@ namespace PBD
 			{
 				m_oldX[i] = pos;
 			}
-			
+
 			FORCE_INLINE Vector3r &getVelocity(const unsigned int i)
 			{
 				return m_v[i];
 			}
 
-			FORCE_INLINE const Vector3r &getVelocity(const unsigned int i) const 
+			FORCE_INLINE const Vector3r &getVelocity(const unsigned int i) const
 			{
 				return m_v[i];
 			}
@@ -216,7 +216,7 @@ namespace PBD
 				return m_a[i];
 			}
 
-			FORCE_INLINE const Vector3r &getAcceleration(const unsigned int i) const 
+			FORCE_INLINE const Vector3r &getAcceleration(const unsigned int i) const
 			{
 				return m_a[i];
 			}
@@ -299,7 +299,7 @@ namespace PBD
 
 			/** Release the array containing the particle data.
 			 */
-			FORCE_INLINE unsigned int size() const 
+			FORCE_INLINE unsigned int size() const
 			{
 				return (unsigned int) m_x.size();
 			}

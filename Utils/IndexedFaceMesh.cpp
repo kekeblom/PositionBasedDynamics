@@ -18,12 +18,12 @@ IndexedFaceMesh& IndexedFaceMesh::operator=(IndexedFaceMesh const& other)
     for (size_t i(0u); i < m_faces.size(); ++i)
     {
         m_faces[i].m_edges = new unsigned int[m_verticesPerFace];
-#if defined(WIN32) || defined(_WIN32) || defined(WIN64)	    
+#if defined(WIN32) || defined(_WIN32) || defined(WIN64)
         std::copy(other.m_faces[i].m_edges, other.m_faces[i].m_edges + m_verticesPerFace,
             stdext::unchecked_array_iterator<unsigned int*>(m_faces[i].m_edges));
 #else
         std::copy(other.m_faces[i].m_edges, other.m_faces[i].m_edges + m_verticesPerFace, m_faces[i].m_edges);
-#endif	    
+#endif
     }
 
     m_verticesEdges.resize(other.m_verticesEdges.size());
@@ -110,12 +110,12 @@ void IndexedFaceMesh::addUV(const Real u, const Real v)
 	uv[1] = v;
 	m_uvs.push_back(uv);
 }
-	
+
 void IndexedFaceMesh::addUVIndex(const unsigned int index)
 {
 	m_uvIndices.push_back(index);
 }
-	
+
 void IndexedFaceMesh::buildNeighbors()
 {
 	typedef std::vector<unsigned int> PEdges;
@@ -133,11 +133,11 @@ void IndexedFaceMesh::buildNeighbors()
 	unsigned int *v = new unsigned int[m_verticesPerFace];
 	unsigned int *edges = new unsigned int[m_verticesPerFace*2];
 	for(unsigned int i=0; i < numFaces(); i++)
-	{		
+	{
 		m_faces[i].m_edges = new unsigned int[m_verticesPerFace];
 		for (unsigned int j=0u; j < m_verticesPerFace; j++)
 			v[j] = m_indices[m_verticesPerFace*i+j];
-			
+
 		for (unsigned int j=0u; j < m_verticesPerFace-1u; j++)
 		{
 			edges[2*j] = v[j];
@@ -190,7 +190,7 @@ void IndexedFaceMesh::buildNeighbors()
 				m_edges.push_back(e);
 				edge = (unsigned int) m_edges.size() - 1u;
 
-				// add vertex-edge connection				
+				// add vertex-edge connection
 				vEdges[a].push_back(edge);
 				vEdges[b].push_back(edge);
 			}
@@ -204,7 +204,7 @@ void IndexedFaceMesh::buildNeighbors()
 			pEdges[b].push_back(edge);
 			// append face
 			m_faces[i].m_edges[j] = edge;
-		}			
+		}
 	}
 	delete [] v;
 	delete [] edges;
@@ -241,7 +241,7 @@ void IndexedFaceMesh::buildNeighbors()
 	delete [] vFaces;
 	delete [] vEdges;
 }
-	
+
 void IndexedFaceMesh::copyUVs(const UVIndices& uvIndices, const UVs& uvs)
 {
 	m_uvs.clear();
@@ -265,4 +265,4 @@ unsigned int IndexedFaceMesh::getVerticesPerFace() const
 {
 	return m_verticesPerFace;
 }
-	
+

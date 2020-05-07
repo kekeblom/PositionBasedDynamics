@@ -9,7 +9,7 @@
 
 namespace PBD
 {
-	/** Collision detection based on cubic signed distance fields. 
+	/** Collision detection based on cubic signed distance fields.
 	*/
 	class CubicSDFCollisionDetection : public DistanceFieldCollisionDetection
 	{
@@ -26,7 +26,7 @@ namespace PBD
 
 			CubicSDFCollisionObject();
 			virtual ~CubicSDFCollisionObject();
-			virtual int &getTypeId() const { return TYPE_ID; }
+			virtual int getTypeId() const { return TYPE_ID; }
 			virtual bool collisionTest(const Vector3r &x, const Real tolerance, Vector3r &cp, Vector3r &n, Real &dist, const Real maxDist = 0.0);
 			virtual double distance(const Eigen::Vector3d &x, const Real tolerance);
 		};

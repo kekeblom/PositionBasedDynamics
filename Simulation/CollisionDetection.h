@@ -12,12 +12,12 @@ namespace PBD
 	public:
 		static const unsigned int RigidBodyContactType = 0;
 		static const unsigned int ParticleContactType = 1;
-		static const unsigned int ParticleRigidBodyContactType = 2;		
+		static const unsigned int ParticleRigidBodyContactType = 2;
 		static const unsigned int ParticleSolidContactType = 3;
 
 		typedef void(*ContactCallbackFunction)(const unsigned int contactType, const unsigned int bodyIndex1, const unsigned int bodyIndex2,
 			const Vector3r &cp1, const Vector3r &cp2,
-			const Vector3r &normal, const Real dist, 
+			const Vector3r &normal, const Real dist,
 			const Real restitutionCoeff, const Real frictionCoeff, void *userData);
 
 		typedef void(*SolidContactCallbackFunction)(const unsigned int contactType, const unsigned int bodyIndex1, const unsigned int bodyIndex2,
@@ -37,13 +37,13 @@ namespace PBD
 			unsigned int m_bodyType;
 
 			virtual ~CollisionObject() {}
-			virtual int &getTypeId() const = 0;
+			virtual int getTypeId() const = 0;
 		};
 
 		struct CollisionObjectWithoutGeometry : public CollisionObject
 		{
 			static int TYPE_ID;
-			virtual int &getTypeId() const { return TYPE_ID; }
+			virtual int getTypeId() const { return TYPE_ID; }
 			virtual ~CollisionObjectWithoutGeometry() {}
 		};
 
@@ -73,10 +73,10 @@ namespace PBD
 
 		void addParticleRigidBodyContact(const unsigned int particleIndex, const unsigned int rbIndex,
 			const Vector3r &cp1, const Vector3r &cp2,
-			const Vector3r &normal, const Real dist, 
+			const Vector3r &normal, const Real dist,
 			const Real restitutionCoeff, const Real frictionCoeff);
 
-		void addParticleSolidContact(const unsigned int particleIndex, const unsigned int solidIndex,
+		void addParticleSolidContact(const unsigned int particleIndex, const unsigned int eolidIndex,
 			const unsigned int tetIndex, const Vector3r &bary,
 			const Vector3r &cp1, const Vector3r &cp2,
 			const Vector3r &normal, const Real dist,

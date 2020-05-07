@@ -6,7 +6,6 @@ using namespace Utilities;
 
 int CollisionDetection::CollisionObjectWithoutGeometry::TYPE_ID = IDFactory::getId();
 
-
 CollisionDetection::CollisionDetection() :
 	m_collisionObjects()
 {
@@ -29,8 +28,8 @@ void CollisionDetection::cleanup()
 }
 
 void CollisionDetection::addRigidBodyContact(const unsigned int rbIndex1, const unsigned int rbIndex2,
-	const Vector3r &cp1, const Vector3r &cp2, 
-	const Vector3r &normal, const Real dist, 
+	const Vector3r &cp1, const Vector3r &cp2,
+	const Vector3r &normal, const Real dist,
 	const Real restitutionCoeff, const Real frictionCoeff)
 {
 	if (m_contactCB)
@@ -39,15 +38,15 @@ void CollisionDetection::addRigidBodyContact(const unsigned int rbIndex1, const 
 
 void CollisionDetection::addParticleRigidBodyContact(const unsigned int particleIndex, const unsigned int rbIndex,
 	const Vector3r &cp1, const Vector3r &cp2,
-	const Vector3r &normal, const Real dist, 
+	const Vector3r &normal, const Real dist,
 	const Real restitutionCoeff, const Real frictionCoeff)
 {
 	if (m_contactCB)
 		m_contactCB(ParticleRigidBodyContactType, particleIndex, rbIndex, cp1, cp2, normal, dist, restitutionCoeff, frictionCoeff, m_contactCBUserData);
 }
 
-void CollisionDetection::addParticleSolidContact(const unsigned int particleIndex, const unsigned int solidIndex, 
-	const unsigned int tetIndex, const Vector3r &bary, const Vector3r &cp1, const Vector3r &cp2, 
+void CollisionDetection::addParticleSolidContact(const unsigned int particleIndex, const unsigned int solidIndex,
+	const unsigned int tetIndex, const Vector3r &bary, const Vector3r &cp1, const Vector3r &cp2,
 	const Vector3r &normal, const Real dist, const Real restitutionCoeff, const Real frictionCoeff)
 {
 	if (m_solidContactCB)
@@ -77,11 +76,6 @@ void CollisionDetection::setSolidContactCallback(CollisionDetection::SolidContac
 
 void CollisionDetection::updateAABBs(SimulationModel &model)
 {
-	const SimulationModel::RigidBodyVector &rigidBodies = model.getRigidBodies();
-	const SimulationModel::TriangleModelVector &triModels = model.getTriangleModels();
-	const SimulationModel::TetModelVector &tetModels = model.getTetModels();
-	const ParticleData &pd = model.getParticles();
-
 	for (unsigned int i = 0; i < m_collisionObjects.size(); i++)
 	{
 		CollisionDetection::CollisionObject *co = m_collisionObjects[i];

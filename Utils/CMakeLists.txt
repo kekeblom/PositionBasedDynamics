@@ -1,9 +1,9 @@
-include(GetGitRevisionDescription)
-get_git_head_revision(GIT_REFSPEC GIT_SHA1)
-git_local_changes(GIT_LOCAL_CHANGES)
-if (${GIT_LOCAL_CHANGES} STREQUAL "DIRTY")
-	set(COMPILER_MESSAGE "#pragma WARNING(Local changes not committed.)")
-endif()
+# include(GetGitRevisionDescription)
+# get_git_head_revision(GIT_REFSPEC GIT_SHA1)
+# git_local_changes(GIT_LOCAL_CHANGES)
+# if (${GIT_LOCAL_CHANGES} STREQUAL "DIRTY")
+# 	set(COMPILER_MESSAGE "#pragma WARNING(Local changes not committed.)")
+# endif()
 configure_file("${PROJECT_PATH}/Utils/Version.h.in" "${PROJECT_PATH}/Utils/Version.h" @ONLY)
 
 add_library(Utils

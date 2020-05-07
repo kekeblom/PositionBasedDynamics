@@ -25,8 +25,7 @@ else()
 endif()
 
 include(ExternalProject)
-set(EigenDir "${CMAKE_SOURCE_DIR}/extern/eigen")
-
+set(EigenDir "${CMAKE_CURRENT_SOURCE_DIR}/extern/eigen")
 
 set(EXT_CMAKE_BUILD_TYPE ${CMAKE_BUILD_TYPE})
 if (NOT ${CMAKE_BUILD_TYPE} STREQUAL "Debug")
@@ -36,7 +35,7 @@ endif()
 ## Discregrid
 if ((DEFINED Discregrid_INCLUDE_DIR) AND (DEFINED Discregrid_DEBUG_LIB) AND (DEFINED Discregrid_LIB))
 	message(STATUS "Using ${Discregrid_INCLUDE_DIR}")
-	set(Discregrid_LIBRARIES optimized ${Discregrid_LIB} debug ${Discregrid_DEBUG_LIB})
+	set(Discregrid_LIBRARIES optimized ${Discregrid_LIB} debug ${Discregrid_DEBUG_LIB} CACHE PATH "")
 else()
 	ExternalProject_Add(
 	   Ext_Discregrid
@@ -45,13 +44,14 @@ else()
 	   GIT_TAG "267067f727c552eba7da8bdb406eafd40673823e"
 	   INSTALL_DIR ${ExternalInstallDir}/Discregrid
 	   CMAKE_ARGS -DCMAKE_BUILD_TYPE:STRING=${EXT_CMAKE_BUILD_TYPE} -DCMAKE_INSTALL_PREFIX:PATH=${ExternalInstallDir}/Discregrid
+		 -DCMAKE_POSITION_INDEPENDENT_CODE=ON
 	   -DBUILD_AS_SHARED_LIBS:BOOL=0
 	   -DBUILD_CMD_EXECUTABLE:BOOL=0 -DEIGEN3_INCLUDE_DIR:PATH=${EigenDir}
 	)
 	ExternalProject_Get_Property(Ext_Discregrid INSTALL_DIR)
 	set(Discregrid_INCLUDE_DIR ${INSTALL_DIR}/include)
 	set(Discregrid_LIBRARIES optimized ${INSTALL_DIR}/lib/${CMAKE_STATIC_LIBRARY_PREFIX}Discregrid${CMAKE_STATIC_LIBRARY_SUFFIX}
-							 debug ${INSTALL_DIR}/lib/${CMAKE_STATIC_LIBRARY_PREFIX}Discregrid_d${CMAKE_STATIC_LIBRARY_SUFFIX})
+		debug ${INSTALL_DIR}/lib/${CMAKE_STATIC_LIBRARY_PREFIX}Discregrid_d${CMAKE_STATIC_LIBRARY_SUFFIX} CACHE PATH "")
 	unset(INSTALL_DIR)
 	message(STATUS "Building ${Discregrid_INCLUDE_DIR}")
 endif()

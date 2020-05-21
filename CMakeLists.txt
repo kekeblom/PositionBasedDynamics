@@ -49,7 +49,7 @@ else()
 	   -DBUILD_CMD_EXECUTABLE:BOOL=0 -DEIGEN3_INCLUDE_DIR:PATH=${EigenDir}
 	)
 	ExternalProject_Get_Property(Ext_Discregrid INSTALL_DIR)
-	set(Discregrid_INCLUDE_DIR ${INSTALL_DIR}/include)
+	set(Discregrid_INCLUDE_DIR ${INSTALL_DIR}/include CACHE PATH "")
 	set(Discregrid_LIBRARIES optimized ${INSTALL_DIR}/lib/${CMAKE_STATIC_LIBRARY_PREFIX}Discregrid${CMAKE_STATIC_LIBRARY_SUFFIX}
 		debug ${INSTALL_DIR}/lib/${CMAKE_STATIC_LIBRARY_PREFIX}Discregrid_d${CMAKE_STATIC_LIBRARY_SUFFIX} CACHE PATH "")
 	unset(INSTALL_DIR)
@@ -68,8 +68,9 @@ else()
 	   INSTALL_DIR ${ExternalInstallDir}/GenericParameters
 	   CMAKE_ARGS -DCMAKE_BUILD_TYPE=${EXT_CMAKE_BUILD_TYPE} -DCMAKE_INSTALL_PREFIX:PATH=${ExternalInstallDir}/GenericParameters -DGENERICPARAMETERS_NO_TESTS:BOOL=1
 	)
+	message("EXTERNAL INSTALL DIR: ${ExternalInstallDir}")
 	ExternalProject_Get_Property(Ext_GenericParameters INSTALL_DIR)
-	set(GenericParameters_INCLUDE_DIR ${INSTALL_DIR}/include)
+	set(GenericParameters_INCLUDE_DIR ${INSTALL_DIR}/include CACHE PATH "")
 	unset(INSTALL_DIR)
 endif()
 

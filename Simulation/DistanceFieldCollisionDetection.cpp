@@ -482,7 +482,7 @@ void DistanceFieldCollisionDetection::addCollisionBox(const unsigned int bodyInd
 	cf->m_bodyIndex = bodyIndex;
 	cf->m_bodyType = bodyType;
 	// distance function requires 0.5*box
-	cf->m_box = 0.5*box;
+	cf->m_box = 0.5 * box;
 	cf->m_bvh.init(vertices, numVertices);
 	cf->m_bvh.construct();
 	cf->m_testMesh = testMesh;
@@ -795,22 +795,32 @@ bool DistanceFieldCollisionDetection::findRefTetAt(const ParticleData &pd, TetMo
 	return true;
 }
 
-void DistanceFieldCollisionDetection::testPoints(const Eigen::Matrix<Real, Eigen::Dynamic, 3, Eigen::RowMajor>& points, Eigen::Matrix<bool, Eigen::Dynamic, 1>& in_collision, double tolerance = 1e-3) {
+void DistanceFieldCollisionDetection::testPoints(SimulationModel &model, const Eigen::Matrix<Real, Eigen::Dynamic, 3, Eigen::RowMajor>& points, Eigen::Matrix<bool, Eigen::Dynamic, 1>& in_collision, double tolerance = 1e-3) {
+	const SimulationModel::RigidBodyVector &rigid_bodies = model.getRigidBodies();
+
 	std::vector<DistanceFieldCollisionDetection::DistanceFieldCollisionObject*> collision_objects;
 	for (unsigned int i=0; i < m_collisionObjects.size(); i++) {
 		collision_objects.push_back((DistanceFieldCollisionDetection::DistanceFieldCollisionObject*)m_collisionObjects[i]);
 	}
+
+	#pragma omp parallel default(shared)
 	for (unsigned int i=0; i < points.rows(); i++) {
-		Eigen::Vector3d point;
-		point[0] = points(i, 0); point[1] = points(i, 1); point[2] = points(i, 2);
-		double distance = std::numeric_limits<double>::max();
+		in_collision[i] = false;
+		Vector3r point = points.row(i);
 		for (DistanceFieldCollisionDetection::DistanceFieldCollisionObject* co : collision_objects) {
-			double object_distance = co->distance(point, 0.0);
-			if (object_distance < distance) {
-				distance = object_distance;
+			auto rigid_body = *rigid_bodies[co->m_bodyIndex];
+			// Only check collisions againts obstacles and not other objects.
+			if (rigid_body.getMass() != 0.0) continue;
+
+			const Vector3r &v1 = rigid_body.getTransformationV1();
+			const Matrix3r &R = rigid_body.getTransformationR();
+			const Vector3r x = R * (point - rigid_body.getPosition()) + v1;
+			const double object_distance = co->distance(x.template cast<double>(), 0.0);
+			if (object_distance < tolerance) {
+				in_collision[i] = true;
+				break;
 			}
 		}
-		in_collision[i] = distance < tolerance;
 	}
 }
 

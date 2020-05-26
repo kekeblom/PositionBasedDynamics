@@ -166,6 +166,7 @@ namespace PBD
 		 */
 		void addCollisionCylinder(const unsigned int bodyIndex, const unsigned int bodyType, const Vector3r *vertices, const unsigned int numVertices, const Vector2r &dim, const bool testMesh = true, const bool invertSDF = false);
 		void testPoints(SimulationModel &model, const Eigen::Matrix<Real, Eigen::Dynamic, 3, Eigen::RowMajor>& points, Eigen::Matrix<bool, Eigen::Dynamic, 1>& in_collision, double tolerance);
+		void computeDistances(SimulationModel &model, const Eigen::Matrix<Real, Eigen::Dynamic, 3, Eigen::RowMajor>& points, Eigen::Matrix<double, Eigen::Dynamic, 1>& distances);
 
 		std::vector<ContactData> m_tempContacts;
 	};

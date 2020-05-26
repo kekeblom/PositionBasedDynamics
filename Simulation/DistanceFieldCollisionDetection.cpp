@@ -824,3 +824,30 @@ void DistanceFieldCollisionDetection::testPoints(SimulationModel &model, const E
 	}
 }
 
+void DistanceFieldCollisionDetection::computeDistances(SimulationModel &model, const Eigen::Matrix<Real, Eigen::Dynamic, 3, Eigen::RowMajor>& points, Eigen::Matrix<double, Eigen::Dynamic, 1>& distances) {
+	const SimulationModel::RigidBodyVector &rigid_bodies = model.getRigidBodies();
+
+	std::vector<DistanceFieldCollisionDetection::DistanceFieldCollisionObject*> collision_objects;
+	for (unsigned int i=0; i < m_collisionObjects.size(); i++) {
+		collision_objects.push_back((DistanceFieldCollisionDetection::DistanceFieldCollisionObject*)m_collisionObjects[i]);
+	}
+
+	#pragma omp parallel default(shared)
+	for (unsigned int i=0; i < points.rows(); i++) {
+		distances[i] = std::numeric_limits<double>::max();
+		Vector3r point = points.row(i);
+		for (DistanceFieldCollisionDetection::DistanceFieldCollisionObject* co : collision_objects) {
+			auto rigid_body = *rigid_bodies[co->m_bodyIndex];
+			// Only check collisions againts obstacles and not other objects.
+			if (rigid_body.getMass() != 0.0) continue;
+
+			const Vector3r &v1 = rigid_body.getTransformationV1();
+			const Matrix3r &R = rigid_body.getTransformationR();
+			const Vector3r x = R * (point - rigid_body.getPosition()) + v1;
+			const double object_distance = co->distance(x.template cast<double>(), 0.0);
+
+			distances[i] = std::min(object_distance, distances[i]);
+		}
+	}
+}
+
